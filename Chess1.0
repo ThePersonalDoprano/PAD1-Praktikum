@@ -1,0 +1,114 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main()
+{
+    string map [8][8];
+    string eingabe ="";
+    int von,nach,von1,nach1;
+
+    string boxLines = "════════╦";
+
+    system("@chcp 65001");
+
+    //Fill "map"
+
+    string figuren = "TSLDKLST";
+
+    for (int i = 0; i < 8; i ++){
+        for (int j=0; j<8;j++){
+            map[i][j]="  ";
+        }
+    }
+
+    for (int i = 0; i < 8; i ++){
+        for (int j=0; j<8;j++){
+            if (i % 7 == 0){
+                //Türme,Springer,Läufer Links
+                map[i][j]=figuren[j];
+                if (i==7)
+                    map[i][j]='w'+map[i][j];
+                else
+                    map[i][j]='s'+map[i][j];
+            }
+
+            if ((i==1))
+                map[i][j]="sB";
+            else if(i==6)
+                map[i][j]="wB";
+        }
+
+    }
+
+
+
+
+    do{
+
+        //Create "game field"
+        int color = 0;
+        int count = 1;
+        char count2 = 'a';
+        if (color % 2 == 0)
+            system("color 03");
+        else
+            system("color 0a");
+        color++;
+
+        for (int i = 1; i <=8; i++)
+            cout << "    " << count2++<<"    ";
+        cout << endl;
+        cout << "╔";
+        for (int i = 1; i <=8; i++)
+            cout << boxLines;
+        cout << endl;
+        for (int b = 0;b <8;b++){
+            for (int i = 1; i <3; i++){
+                for (int j = 0;j < 8; j++)
+                    if (i == 2)
+                        cout <<"║"<< "   "<<map[b][j]<<"   ";
+                    else
+                        cout <<"║"<< "        ";
+                cout <<"║";
+                if (i==1)
+                    cout << " " << count++;
+                cout << endl;
+
+            }
+            cout << "╠";
+            for (int c = 0;c <8;c++)
+                cout << "════════╬";
+            cout <<endl;
+        }
+
+        //Movements
+        cout <<"Eingabe: ";
+        cin >> eingabe;
+        von = int(eingabe[1])-49;
+        von1 = int(eingabe[0])-97;
+        nach = int(eingabe[4])-49;
+        nach1 = int(eingabe[3])-97;
+
+        if (von<8 && von1<8 && nach<8 && nach1<8){
+            map[nach][nach1]=map[von][von1];
+            map[von][von1]="  ";
+        }
+    }while(eingabe != "exit");
+
+
+}
+
+//    while (eingabe != "exit"){
+//        cout << "Geben Sie eine position ein" << endl;
+//        cin >> eingabe;
+//        eingabe=eingabe[0]+(int(eingabe[1])-96)+eingabe[2]+eingabe[3]+int(eingabe[4])-97;
+
+//        cout << eingabe;
+//        if (map[eingabe[0]][eingabe[1]] == "  "){
+//            cout << "Falsche Eingabe"<<endl;
+//        } else if (map[eingabe[0]][eingabe[1]] == "wB"){
+
+//        }
+//    }
+
