@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <unistd.h>
 using namespace std;
 
 int main()
@@ -46,7 +47,7 @@ int main()
 
 
     do{
-    //Create "game field"
+        //Create "game field"
         int count = 1;
         char count2 = 'a';
         color ++;
@@ -85,7 +86,7 @@ int main()
             cout <<endl;
         }
 
-    //Movements
+        //Movements
         bool legal=false;
         do {
             cout <<"Bitte Zug eingeben (z.B f1-e3): ";
@@ -96,34 +97,48 @@ int main()
             nach1 = int(eingabe[3])-97;
 
             if (von < 8 && von >=0 && von1 < 8 && von1 >=0 && nach < 8 && nach >=0 //Only entries >=0 & <8
-                    && nach1 < 8 && nach1 >=0 && map[von][von1]!="  ")             //Only move if there is something
-                legal = true;                                                      //to move
+                    && nach1 < 8 && nach1 >=0 && map[von][von1]!="  ")             //Only move if there is something to move
+                legal = true;
             else if(eingabe=="exit"){
                 von=0;von1=0;nach=0;nach1=0;
                 legal = true;
             }
             else
-                cout << "Illegal move\n\a";             //"\a" Macht ein beep
-        }while (legal == false);
+                cout << "Illegal move\n\a";            //"\a" Macht ein beep
+            for (short pos =-8;pos < 9;pos++){
+                if((map[von][von1]=="sT"||map[von][von1]=="wT")){
+                    if(map[von+pos][von1]=="  ")
+                        map [von+pos][von] = " *";
+                    if(map[von][von1+pos]=="  ")
+                        map [von][von1+pos] = " *";
+                }
+            }
+            //Make the move
+            if (map[nach][nach1]=="wK"||map[nach][nach1]=="sK")
+                while (int anim=0 < 30) {                  //Schachmatt celebration! (RIP K)
+                    cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
+                    usleep(70000);
+                    system("cls");
+                    cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";
+                    usleep(70000);
+                    system("cls");
+                    cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▓▒░▒        Schachmatt!          ▓▒░▒";
+                    usleep(70000);
+                    system("cls");
+                    cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";
+                    usleep(70000);
+                    system("cls");
+                    cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
+                    usleep(70000);
+                    system("cls");
+                    cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒░▒▓        Schachmatt!          ▒░▒▓";
+                    usleep(70000);
+                    system("cls");
+                }
+            map[nach][nach1]=map[von][von1];
+            map[von][von1]="  ";
 
-        //Make the move
-        map[nach][nach1]=map[von][von1];
-        map[von][von1]="  ";
+        }while(legal = false);
 
     }while(eingabe != "exit");
-
-
 }
-
-//    while (eingabe != "exit"){
-//        cout << "Geben Sie eine position ein" << endl;
-//        cin >> eingabe;
-//        eingabe=eingabe[0]+(int(eingabe[1])-96)+eingabe[2]+eingabe[3]+int(eingabe[4])-97;
-
-//        cout << eingabe;
-//        if (map[eingabe[0]][eingabe[1]] == "  "){
-//            cout << "Falsche Eingabe"<<endl;
-//        } else if (map[eingabe[0]][eingabe[1]] == "wB"){
-
-//        }
-//    }
