@@ -7,7 +7,7 @@ int main()
 {
     string map [8][8];
     string eingabe ="";
-    int von,nach,von1,nach1,color;
+    int von,nach,von1,nach1,color=0;
 
     string boxLines = "════════╦";
 
@@ -47,6 +47,7 @@ int main()
 
 
     do{
+
         //Create "game field"
         int count = 1;
         char count2 = 'a';
@@ -102,43 +103,58 @@ int main()
             else if(eingabe=="exit"){
                 von=0;von1=0;nach=0;nach1=0;
                 legal = true;
+                break;
             }
-            else
+            if(legal && ((map[von][von1][0] == 'w' && color%2 != 0)||(map[von][von1][0] == 's' && color%2 == 0))){
+                legal = false;
+                cout << "Du bist nicht dran!    \t";
+            }
+            if(legal && map[von][von1][0] == map[nach][nach1][0]){
+                cout << "Verräter!\t\t";
+                legal = false;
+            }
+
+
+            //            for (short pos =-8;pos < 9;pos++){
+            //                if((map[von][von1]=="sT"||map[von][von1]=="wT")){
+            //                    if(map[von+pos][von1]=="  ")
+            //                        map [von+pos][von] = " *";
+            //                    if(map[von][von1+pos]=="  ")
+            //                        map [von][von1+pos] = " *";
+            //                }
+
+            //            }
+
+            if (legal == false)
                 cout << "Illegal move\n\a";            //"\a" Macht ein beep
-            for (short pos =-8;pos < 9;pos++){
-                if((map[von][von1]=="sT"||map[von][von1]=="wT")){
-                    if(map[von+pos][von1]=="  ")
-                        map [von+pos][von] = " *";
-                    if(map[von][von1+pos]=="  ")
-                        map [von][von1+pos] = " *";
-                }
+
+        }while(legal == false);
+
+
+
+        if (map[nach][nach1]=="wK"||map[nach][nach1]=="sK")
+            while (int anim=0 < 30) {                  //Schachmatt celebration! (RIP K)
+                cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
+                usleep(70000);
+                system("cls");
+                cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";
+                usleep(70000);
+                system("cls");
+                cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▓▒░▒        Schachmatt!          ▓▒░▒";
+                usleep(70000);
+                system("cls");
+                cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";
+                usleep(70000);
+                system("cls");
+                cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
+                usleep(70000);
+                system("cls");
+                cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒░▒▓        Schachmatt!          ▒░▒▓";
+                usleep(70000);
+                system("cls");
+                eingabe = "exit";
             }
-            //Make the move
-            if (map[nach][nach1]=="wK"||map[nach][nach1]=="sK")
-                while (int anim=0 < 30) {                  //Schachmatt celebration! (RIP K)
-                    cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
-                    usleep(70000);
-                    system("cls");
-                    cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";
-                    usleep(70000);
-                    system("cls");
-                    cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▓▒░▒        Schachmatt!          ▓▒░▒";
-                    usleep(70000);
-                    system("cls");
-                    cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";
-                    usleep(70000);
-                    system("cls");
-                    cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
-                    usleep(70000);
-                    system("cls");
-                    cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒░▒▓        Schachmatt!          ▒░▒▓";
-                    usleep(70000);
-                    system("cls");
-                }
             map[nach][nach1]=map[von][von1];
             map[von][von1]="  ";
-
-        }while(legal = false);
-
     }while(eingabe != "exit");
 }
