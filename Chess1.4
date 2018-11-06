@@ -90,13 +90,13 @@ int main()
                 //Shows the dead bodies next to the field
                 if (i==2&&(count==3)){
                     cout << "\t Pieces: ";
-                    for (int i = 0; i < deads.size();i++)
+                    for (unsigned int i = 0; i < deads.size();i++)
                         if(deads[i][0] == 'w')
                             cout << deads[i] << " ";
                 }
                 if (i==2&&(count==8)){
                     cout << "\t Pieces: ";
-                    for (int i = 0; i < deads.size();i++)
+                    for (unsigned int i = 0; i < deads.size();i++)
                         if(deads[i][0] == 's')
                             cout << deads[i] << " ";
                 }
@@ -168,7 +168,7 @@ int main()
             cout << "Who you want to revive? ";                     //Ein Bauer kann nach hintern gehen und es würde auch legal
             string input;
             cin >> input;
-            for (int i =0;i < deads.size(); i++){
+            for (unsigned int i =0;i < deads.size(); i++){
                 if (input == deads[i]){
                     map[von][von1] = deads[i];
                     deads[i].erase();
@@ -215,6 +215,3 @@ int main()
         map[von][von1]="  ";
     }while(eingabe != "exit");
 }
-
-///Interesting bugs:
-/// a1-a2 / e8-a1 / exit = Schachmatt!!
