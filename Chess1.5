@@ -2,6 +2,7 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
+#include <windows.h>
 using namespace std;
 
 int main()
@@ -180,35 +181,33 @@ int main()
 
         int anim=0;
         if (map[nach][nach1][1]=='K'){
-            while (anim < 10) {                  //Schachmatt celebration! (RIP K)
-                cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
-                usleep(70000);
-                system("color ae");
-                system("cls");
-                cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";
-                usleep(70000);
-                system("color d7");
-                system("cls");
-                cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▓▒░▒        Schachmatt!          ▓▒░▒";
-                usleep(70000);
-                system("color ae");
-                system("cls");
-                cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";
-                usleep(70000);
-                system("color d7");
-                system("cls");
-                cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
-                usleep(70000);
-                system("color ae");
-                system("cls");
-                cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒░▒▓        Schachmatt!          ▒░▒▓";
-                usleep(70000);
-                system("color d7");
-                system("cls");
-                eingabe = "exit";
-                anim++;
-
-            }
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (196,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▓▒░▒        Schachmatt!          ▓▒░▒";system("color ae");Beep (262,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (330,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";system("color ae");Beep (392,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒░▒▓        Schachmatt!          ▒░▒▓";system("color d7");Beep (523,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";system("color ae");Beep (660,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (784,100);Sleep(575);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▓▒░▒        Schachmatt!          ▓▒░▒";system("color ae");Beep (660,100);Sleep(575);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (207,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";system("color ae");Beep (262,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒░▒▓        Schachmatt!          ▒░▒▓";system("color d7");Beep (311,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";system("color ae");Beep (415,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (523,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▓▒░▒        Schachmatt!          ▓▒░▒";system("color ae");Beep (622,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (830,100);Sleep(575);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";system("color ae");Beep (622,100);Sleep(575);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒░▒▓        Schachmatt!          ▒░▒▓";system("color d7");Beep (233,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";system("color ae");Beep (294,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (349,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▓▒░▒        Schachmatt!          ▓▒░▒";system("color ae");Beep (466,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (587,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";system("color ae");Beep (698,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒░▒▓        Schachmatt!          ▒░▒▓";system("color d7");Beep (932,100);Sleep(575);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";system("color ae");Beep (932,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (932,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▓▒░▒        Schachmatt!          ▓▒░▒";system("color ae");Beep (932,100);Sleep(125);system("cls");
+            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (1046,675);system("cls");
             break;
         }
         map[nach][nach1]=map[von][von1];
