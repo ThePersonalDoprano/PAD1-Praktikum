@@ -1,8 +1,7 @@
 #include <iostream>
 #include <string>
-#include <unistd.h>
-#include <vector>
-#include <windows.h>
+#include <vector>           //Dead Counter
+#include <windows.h>        //Sound effects!
 using namespace std;
 
 int main()
@@ -61,7 +60,7 @@ int main()
             system("color 03");
         else
             system("color 0a");
-        system("cls");
+        //system("cls");
 
         //Create the lines
         for (int i = 1; i <=8; i++)
@@ -165,8 +164,8 @@ int main()
             deads.push_back(map[nach][nach1]);
 
         //Revive a Friend
-        if (map[von][von1][1] == 'B' && (nach1==0||nach1==7)&&deads.size()!=0){      //Bugs: it doesnt recognize nach1==0 ...
-            cout << "Who you want to revive? ";                     //Ein Bauer kann nach hintern gehen und es würde auch legal
+        if (((map[von][von1][1]=='B') &&  (deads.size()!=0)) && ((nach==0)||(nach==7))){      //Bugs: it doesnt recognize nach1==0 ...
+            cout << "Who you want to revive?";                     //Ein Bauer kann nach hintern gehen und es würde auch legal
             string input;
             cin >> input;
             for (unsigned int i =0;i < deads.size(); i++){
@@ -179,7 +178,6 @@ int main()
         }
 
 
-        int anim=0;
         if (map[nach][nach1][1]=='K'){
             cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (196,100);Sleep(125);system("cls");
             cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▓▒░▒        Schachmatt!          ▓▒░▒";system("color ae");Beep (262,100);Sleep(125);system("cls");
