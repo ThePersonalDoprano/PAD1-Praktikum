@@ -7,8 +7,9 @@
 #include <conio.h>
 using namespace std;
 
-string testMap[110][32];
+string map[110][32];
 int xMove=1,yMove=1;
+char player='w';
 
 void cleanScreen(){
     for(int i =0;i<5;i++)
@@ -18,20 +19,20 @@ void cleanScreen(){
 void showMap(int x, int y){
     for (int i=0;i<32;i++) {
         for (int j=0;j<110;j++){
-            if (x != 0){
+            if (x != 0&&i>3){
                 if(((i-4)/3>y-2 && (i-5)/3<=y-1) && (j/9>x-2 && (j-1)/9<=x-1)){
                     WORD Attributes = 0;
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED);
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_GREEN);
-                    cout << testMap[j][i];
+                    cout << map[j][i];
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), Attributes);
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);
                 } else
-                    cout << testMap[j][i];
+                    cout << map[j][i];
             }
 
             else
-                cout << testMap[j][i];
+                cout << map[j][i];
         }
         cout << endl;
     }
@@ -49,7 +50,56 @@ void moveAround(int input){
         yMove--;
     if(in=='s')
         yMove++;
+    if(xMove < 1)
+        xMove = 1;
+    if(xMove > 8)
+        xMove = 8;
+    if(yMove < 1)
+        yMove = 1;
+    if(yMove > 8)
+        yMove = 8;
     showMap(xMove,yMove);
+}
+
+string xyToPiece(int xInp, int yInp){
+    return map[(xInp*9)-5][(yInp*3)+3]+map[(xInp*9)-4][(yInp*3)+3];
+}
+
+string selectPlayerFrom(){
+    string choosenPla;
+    int c;
+    bool legal=true;
+    do{
+        do{
+            c = getch();
+            system("cls");
+            moveAround(c);
+        } while (c!=13); //13 = enter    //When it press Enter, the last XY position are in xMove and yMove
+
+        if(xyToPiece(xMove,yMove)[0]!=player){
+            legal=false;
+            cout << " Du bist nicht dran!";
+        } else
+            legal = true;
+    }while(legal == false);
+}
+
+void selectPlayerTo(string from){
+    int c;
+    bool legal=true;
+    do{
+        do{
+            c = getch();
+            system("cls");
+            moveAround(c);
+        } while (c!=13); //13 = enter    //When it press Enter, the last XY position are in xMove and yMove
+
+        if(xyToPiece(xMove,yMove)[0]==player){
+            legal=true;
+            cout << "Other player selected!";
+        } else
+            legal = false;
+    }while(legal == false);
 }
 
 void createMap(){  //Create "game field"
@@ -60,13 +110,13 @@ void createMap(){  //Create "game field"
 
     for (int i = 5; i <=9*8; i++){             //Shows the "abc" that appears on top
         if (i % 9 != 0)                        //i beggins with 5, so at the start we will have only
-            testMap[i][3]=" ";                 //4 blank spaces, not 8.
+            map[i][3]=" ";                 //4 blank spaces, not 8.
         else
-            testMap[i][3]=count2++;
+            map[i][3]=count2++;
     }
 
     for (int i = 5; i<29;i+=3){                //Shows the "123" that appears on one
-        testMap[74][i] = to_string(count);     //Side of the map
+        map[74][i] = to_string(count);     //Side of the map
         count--;
     }
 
@@ -75,13 +125,13 @@ void createMap(){  //Create "game field"
     for (int i = 4;i <29;i++){
         for (int j = 0;j<73;j++){
             if (j%9==0&&(i-4)%3==0){
-                testMap[j][i] = "╬";
+                map[j][i] = "╬";
             } else if (j%9==0&&(i-4)%3!=0){
-                testMap[j][i] = "║";
+                map[j][i] = "║";
             } else if ((i-4)%3==0){
-                testMap[j][i] = "═";
+                map[j][i] = "═";
             } else
-                testMap[j][i] = " ";
+                map[j][i] = " ";
         }
     }
 
@@ -93,19 +143,19 @@ void createMap(){  //Create "game field"
         for (int j = 0; j < 70; j++){
             if (j%9==0){
                 if ((i == 6 || i == 27)){
-                    testMap[j+5][i]=figuren[count++]; //Hier kommt TSLDKLST
+                    map[j+5][i]=figuren[count++]; //Hier kommt TSLDKLST
                 }
 
                 //Bauern
                 if ((i==9)||(i==24)){
-                    testMap[j+5][i]="B";
+                    map[j+5][i]="B";
                 }
 
                 //Weiß oder Schwarz?
                 if (i==6||i==9)
-                    testMap[j+4][i]="w";
+                    map[j+4][i]="s";
                 else if (i==27||i==24)
-                    testMap[j+4][i]="s";
+                    map[j+4][i]="w";
             }
         }
         count = 0;
@@ -119,75 +169,25 @@ int main() {
 #endif
 
     //    string eingabe ="";
-    int von,nach,von1,nach1,color=0;
+    //int von,nach,von1,nach1,color=0;
     //    vector <string> deads;
     //    cleanScreen();
     createMap();
+    showMap(1,1); //Shows the map at start
+
     do{
-
-#ifdef _WIN32
-//        if (color % 2 == 0)
-//            system("color 03");
-
-//        else
-//            system("color 0a");
-#endif
-
-        //-------------------------------------------------------------------------
         //Movements
+        selectPlayerFrom();
+        string choosenPla = xyToPiece(xMove,yMove);
+        cout << "\n The choosen Player is: " << choosenPla;
 
 
-        showMap(0,0);
-
-        int c;
-        do{
-            c = getch();
-            system("cls");
-            moveAround(c);
-        } while (c!=13);
-        //        bool legal=false;
-        //        do {
-        //            cout <<"Bitte Zug eingeben (z.B f1-e3): ";
-        //            cin >> eingabe;
-        //            von = int(eingabe[1])-49;
-        //            von1 = int(eingabe[0])-97;
-        //            nach = int(eingabe[4])-49;
-        //            nach1 = int(eingabe[3])-97;
-
-        //            //Legal moves detector
-        //            if (von < 8 && von >=0 && von1 < 8 && von1 >=0 && nach < 8 && nach >=0 //Only entries >=0 & <8
-        //                    && nach1 < 8 && nach1 >=0 && testMap[von][von1]!="  ")             //Only move if there is something to move
-        //                legal = true;
-        //            else if(eingabe=="exit"){
-        //                von=0;von1=0;nach=0;nach1=0;
-        //                legal = true;
-        //                break;
-        //            }
-        //            if(legal && ((testMap[von][von1][0] == 's' && color%2 != 0)||(testMap[von][von1][0] == 'w' && color%2 == 0))){
-        //                legal = false;
-        //                cout << "Du bist nicht dran!    \t";
-        //            }
-        //            if(legal && testMap[von][von1][0] == testMap[nach][nach1][0]){
-        //                cout << "Verräter!\t\t";
-        //                legal = false;
-        //            }
-
-        //            ///Some logik Tests
-        //            //            for (short pos =-8;pos < 9;pos++){
-        //            //                if((testMap[von][von1]=="sT"||testMap[von][von1]=="wT")){
-        //            //                    if(testMap[von+pos][von1]=="  ")
-        //            //                        testMap [von+pos][von] = " *";
-        //            //                    if(testMap[von][von1+pos]=="  ")
-        //            //                        testMap [von][von1+pos] = " *";
-        //            //                }
-
-        //            //            }
-
-        //            if (legal == false)
-        //                cout << "Illegal move\n\a";            //"\a" Macht ein beep
-
-        //        }while(legal == false);
-
+        ///Si se elige nuevamente, o presiona ESC, se soltara la seleccion
+        /// Cuando selecciona a otro lugar, pues se transporta a el... y en este caso te va ha servir
+        /// Lo que ya hiciste con la anterior version:
+        /// Lo seleccionado esta vacio? Estas matando a tu propio compañero?
+        /// JaqueMate?
+        /// E implementa nuevamente el contador de muertes!
         //        //-------------------------------------------------------------------------
         //        //Some Other funktionalitäten
 
