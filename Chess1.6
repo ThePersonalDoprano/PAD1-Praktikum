@@ -17,23 +17,33 @@ void cleanScreen(){
 }
 
 void showMap(int x, int y){
-    for (int i=0;i<32;i++) {
+    string temp="";         //We save in this temp a secuence of the string "map", so it doesnt need to
+    for (int i=3;i<32;i++) {   //call print each time a "char" comes, but each time a "string" comes... it faster to print
         for (int j=0;j<110;j++){
-            if (x != 0&&i>3){
+            if (i>3){   //So werden wir die farbe von "abc" nicht ändern
                 if(((i-4)/3>y-2 && (i-5)/3<=y-1) && (j/9>x-2 && (j-1)/9<=x-1)){
+                    //Change the color of the selected position
+                    cout << temp;
+                    temp = "";
                     WORD Attributes = 0;
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED);
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_GREEN);
                     cout << map[j][i];
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), Attributes);
                     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);
-                } else
-                    cout << map[j][i];
+                } else if (j < 110){
+                    temp = temp + map[j][i];
+                    //cout << map[j][i]<<;
+                } else{
+                    cout << temp;
+                    temp = "";
+                }
             }
-
             else
                 cout << map[j][i];
         }
+        cout << temp;
+        temp = "";
         cout << endl;
     }
     cout << "X: " << x << " Y: " << y;
@@ -42,13 +52,13 @@ void showMap(int x, int y){
 void moveAround(int input){
     char in = input;
     cout <<in;
-    if(in=='a')
+    if(in=='a' || in =='K') //KMHP ist eine schnelle lösung um die Pfeile zu nutzen
         xMove--;
-    if(in=='d')
+    if(in=='d' || in =='M')
         xMove++;
-    if(in=='w')
+    if(in=='w' || in =='H')
         yMove--;
-    if(in=='s')
+    if(in=='s' || in =='P')
         yMove++;
     if(xMove < 1)
         xMove = 1;
@@ -75,7 +85,7 @@ string selectPlayerFrom(){
             system("cls");
             moveAround(c);
         } while (c!=13); //13 = enter    //When it press Enter, the last XY position are in xMove and yMove
-
+        
         if(xyToPiece(xMove,yMove)[0]!=player){
             legal=false;
             cout << " Du bist nicht dran!";
@@ -84,43 +94,40 @@ string selectPlayerFrom(){
     }while(legal == false);
 }
 
-void selectPlayerTo(string from){
+void selectPlayerTo(int x, int y){
+    string choosenPla;
     int c;
-    bool legal=true;
     do{
-        do{
-            c = getch();
-            system("cls");
-            moveAround(c);
-        } while (c!=13); //13 = enter    //When it press Enter, the last XY position are in xMove and yMove
-
-        if(xyToPiece(xMove,yMove)[0]==player){
-            legal=true;
-            cout << "Other player selected!";
-        } else
-            legal = false;
-    }while(legal == false);
+        c = getch();
+        system("cls");
+        moveAround(c);
+    } while (c!=13); //13 = enter    //When it press Enter, the last XY position are in xMove and yMove
+    choosenPla = xyToPiece(x,y);
+    map [(x*9)-5][(y*3)+3] = " ";
+    map [(x*9)-4][(y*3)+3] = " ";
+    map [(xMove*9)-5][(yMove*3)+3] = choosenPla[0];
+    map [(xMove*9)-4][(yMove*3)+3] = choosenPla[1];
 }
 
 void createMap(){  //Create "game field"
     int count = 8;
     char count2 = 'a';
-
+    
     //Create the map!
-
+    
     for (int i = 5; i <=9*8; i++){             //Shows the "abc" that appears on top
         if (i % 9 != 0)                        //i beggins with 5, so at the start we will have only
             map[i][3]=" ";                 //4 blank spaces, not 8.
         else
             map[i][3]=count2++;
     }
-
+    
     for (int i = 5; i<29;i+=3){                //Shows the "123" that appears on one
         map[74][i] = to_string(count);     //Side of the map
         count--;
     }
-
-
+    
+    
     //Creates the "Grid"
     for (int i = 4;i <29;i++){
         for (int j = 0;j<73;j++){
@@ -134,7 +141,7 @@ void createMap(){  //Create "game field"
                 map[j][i] = " ";
         }
     }
-
+    
     //Figuren!
     //string testMap[110j][32i];
     count = 0;
@@ -145,12 +152,12 @@ void createMap(){  //Create "game field"
                 if ((i == 6 || i == 27)){
                     map[j+5][i]=figuren[count++]; //Hier kommt TSLDKLST
                 }
-
+                
                 //Bauern
                 if ((i==9)||(i==24)){
                     map[j+5][i]="B";
                 }
-
+                
                 //Weiß oder Schwarz?
                 if (i==6||i==9)
                     map[j+4][i]="s";
@@ -163,25 +170,30 @@ void createMap(){  //Create "game field"
 }
 
 int main() {
-
+    
 #ifdef _WIN32
     system("@chcp 65001");
 #endif
-
+    
     //    string eingabe ="";
     //int von,nach,von1,nach1,color=0;
     //    vector <string> deads;
     //    cleanScreen();
     createMap();
     showMap(1,1); //Shows the map at start
-
+    
     do{
         //Movements
         selectPlayerFrom();
         string choosenPla = xyToPiece(xMove,yMove);
         cout << "\n The choosen Player is: " << choosenPla;
-
-
+        selectPlayerTo(xMove,yMove);
+        showMap(1,1);
+        if(player == 'w')
+            player = 's';
+        else
+            player = 'w';
+        
         ///Si se elige nuevamente, o presiona ESC, se soltara la seleccion
         /// Cuando selecciona a otro lugar, pues se transporta a el... y en este caso te va ha servir
         /// Lo que ya hiciste con la anterior version:
@@ -190,11 +202,11 @@ int main() {
         /// E implementa nuevamente el contador de muertes!
         //        //-------------------------------------------------------------------------
         //        //Some Other funktionalitäten
-
+        
         //        //Dead counter
         //        if (testMap[nach][nach1] != "  ")
         //            deads.push_back(testMap[nach][nach1]);
-
+        
         //        //Revive a Friend
         //        if (((testMap[von][von1][1]=='B') &&  (deads.size()!=0)) && ((nach==0)||(nach==7))){      //Bugs: it doesnt recognize nach1==0 ...
         //            cout << "Who you want to revive?";                     //Ein Bauer kann nach hintern gehen und es würde auch legal
@@ -206,9 +218,9 @@ int main() {
         //                    deads[i].erase();
         //                }
         //            }
-
+        
         //        }
-
+        
         //#ifdef _WIN32
         //        if (testMap[nach][nach1][1]=='K'){
         //            cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (196,100);Sleep(125);cleanScreen();
@@ -245,12 +257,12 @@ int main() {
         //        if (testMap[nach][nach1][1]=='K'){
         //            cout << "Schachmatt!";
         //        }
-
+        
         //        testMap[nach][nach1]=testMap[von][von1];
         //        testMap[von][von1]="  ";
         //        cleanScreen();
-
-
+        
+        
         //        WORD Attributes = 0;
         //        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED);
         //        printf("Foreground change..\n");
@@ -258,10 +270,10 @@ int main() {
         //        printf("Foreground change..\n");
         //        SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_INTENSITY);
         //        printf("Foreground change..\n");
-
+        
         //        int ii;
         //        cin >> ii;
-
+        
         //#ifdef _WIN32
         //        system("cls");
         //#endif
