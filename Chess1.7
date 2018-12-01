@@ -1,0 +1,401 @@
+#include <iostream>
+#include <string>
+//#include <vector>         //Dead Counter //Nope...
+#include <windows.h>        //Sound effects!
+#include <conio.h>
+using namespace std;
+
+static string map[110][32];
+static int xMove,yMove;     //The position of the "green square", the values are from 1 to 8
+static char player;
+static int selX, selY;
+static int wDeads,sDeads;
+static string dead[2][16];
+static string note;
+
+
+/// ShowMap(int x, int y)
+/* Shows the Chess Table, "x" and "y" is the position of the actual
+ * square where the user is pointing, this square will appear green on the output.
+ *
+ * The input can be a number from 1 to 8
+ */
+void showMap(int x, int y){
+    system("cls");
+    if(player == 'w')
+        map[80][6]="\tWeiß ist dran";
+    else
+        map[80][6]= "\tSchwarz ist dran";
+
+    //This shows the eliminated players
+    map[80][9] = "\t";  //It reset this position with a tab, why? Well... just accept it
+    map[80][24] = "\t";
+    map[80][8]="\tDEADS WEISS:";
+    for (int i = 0;i<=wDeads;i++)   //Shows white eliminated playersx
+        map[80][9] += dead[0][i]+" ";
+    map[80][23]="\tDEADS SCHWARZ:";
+    for (int i = 0;i<=sDeads;i++)
+        map[80][24] += dead[1][i]+" ";
+
+
+    string temp="";            //We save in this temp a secuence of the string "map", so it doesnt need to
+    for (int i=3;i<30;i++) {   //call print each time a "char" comes, but each time a "string" comes... it is faster to print
+        for (int j=0;j<81;j++){
+            if (i>3){   //So werden wir die farbe von "abc" nicht ändern
+                //Change the color of the current position
+                if(((i-4)/3>y-2 && (i-5)/3<=y-1) && (j/9>x-2 && (j-1)/9<=x-1)){
+                    cout << temp;
+                    temp = "";
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED);
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_GREEN);
+                    cout << map[j][i];
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0);
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);
+
+                    //Change the color of the selected position
+                } else if((x!=0&&y!=0)&&(((i-4)/3>selY-2 && (i-5)/3<=selY-1) && (j/9>selX-2 && (j-1)/9<=selX-1))){
+                    cout << temp;
+                    temp = "";
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED);
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_BLUE);
+                    cout << map[j][i];
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0);
+                    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY);
+                } else if (j < 110){
+                    temp = temp + map[j][i];    //fill "temp" with chars.
+                } else{
+                    cout << temp;
+                    temp = "";
+                }
+            }else
+                cout << map[j][i];
+        }
+        cout << temp;
+        temp = "";
+        cout << endl;
+    }
+    cout << "\t\t" << note; //Shows a message to the user, like the actual selected piece
+}
+
+/// char pause()
+/* Shows the user a Screen with the text "Pause"
+ * The user can decide whether exit the programm or to continue with the game
+ *
+ * It return a char so at the end the user will see the map... Its a cheap solution...
+ * but "pause()" its only used from the function "moveAround()"
+*/
+char pause(){
+    system("cls");
+    cout << "\n\n\n\t\t8888888b.\n\t\t888   Y88b\n\t\t888    888\n\t\t888   d88P 8888b.  888  888 .d8888b   .d88b.\n\t\t8888888P\"     \"88b 888  888 88K      d8P  Y8b\n\t\t888       .d888888 888  888 \"Y8888b. 88888888\n\t\t888       888  888 Y88b 888      X88 Y8b.    d8b d8b d8b\n\t\t888       \"Y888888  \"Y88888  88888P'  \"Y8888 Y8P Y8P Y8P\n"<<endl;
+    cout << "\n\t\t     Press 'q' to quit, or press 'enter' to continue.";
+    int in;
+    do{
+        in = getch();
+        if (in==13){
+            return 'a';
+        }
+        else if (in == 113){
+            cout << "\n\n\n";
+            terminate();
+        }
+    } while (true);
+}
+
+/// moveAround(int input)
+/* It allows the user to move around the map with the keystrokes
+ * when a keystroke its catch, it shows to the user the selected square.
+ * It also teletransport the selected square if the user moves it to a limit
+ *
+ * This function ends when the user press "enter" or "space"
+ *
+ * This function change the global value of "xMove" and "yMove"
+ */
+void moveAround(){
+    char in;
+    do{
+
+        in = char(getch());
+        if(in=='a' || in =='K'){ //KMHP ist eine schnelle lösung um die Pfeile zu nutzen
+            xMove--;}
+        if(in=='d' || in =='M'){
+            xMove++;}
+        if(in=='w' || in =='H'){
+            yMove--;}
+        if(in=='s' || in =='P'){
+            yMove++;}
+        if(xMove < 1)
+            xMove = 8;
+        if(xMove > 8)
+            xMove = 1;
+        if(yMove < 1)
+            yMove = 8;
+        if(yMove > 8)
+            yMove = 1;
+        if(in == 27 || in == 107)
+            in = pause();
+        if(in=='a'||in=='K'||in=='d'||in=='M'||in=='w'||in=='H'||in=='s'||in=='P'||in==13||in==32){
+            system("cls");
+            showMap(xMove,yMove);   //Das alles nur um ein besseren "input" von die "Arrows" zu haben
+        }
+    } while (in!=13 && in!=32); //When it press Enter or space, the last XY position are in xMove and yMove
+}
+
+/// xyToPiece(int xInp, int yInp)
+/* The Input can be a number from 1 to 8
+ *
+ * It returns a 2 character String with the piece on the coordinates "xInp,yInp"
+ * For example: "wB"
+ *  or if there is nothing to show: "  "
+ */
+string xyToPiece(int xInp, int yInp){   //Der output ist ein String mit der spieler zB.: "wB"
+    return map[(xInp*9)-5][(yInp*3)+3]+map[(xInp*9)-4][(yInp*3)+3];
+}
+
+/// schachMatt()
+/* It is just a stupid funktion... It activates when the king is killed.
+ * If you are lucky, you will hear the mario bross song, when mario catchs the flag
+ *
+ * It exits the programm when the song ends
+ * [[ noreturn ]] means that... well... you know what it means
+ */
+[[ noreturn ]] void schachMatt(){
+    unsigned long x=5;   //Je kleiner desto schneller geht der Lied
+    cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (196,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▓▒░▒        Schachmatt!          ▓▒░▒";
+    system("color ae");Beep (262,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (330,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
+    system("color ae");Beep (392,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒░▒▓        Schachmatt!          ▒░▒▓";system("color d7");Beep (523,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
+    system("color ae");Beep (660,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (784,300);Sleep(575/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▓▒░▒        Schachmatt!          ▓▒░▒";
+    system("color ae");Beep (660,300);Sleep(535/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (207,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
+    system("color ae");Beep (262,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒░▒▓        Schachmatt!          ▒░▒▓";system("color d7");Beep (311,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
+    system("color ae");Beep (415,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (523,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▓▒░▒        Schachmatt!          ▓▒░▒";
+    system("color ae");Beep (622,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (830,300);Sleep(575/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
+    system("color ae");Beep (622,300);Sleep(575/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒░▒▓        Schachmatt!          ▒░▒▓";system("color d7");Beep (233,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
+    system("color ae");Beep (294,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (349,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▓▒░▒        Schachmatt!          ▓▒░▒";
+    system("color ae");Beep (466,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (587,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
+    system("color ae");Beep (698,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒░▒▓        Schachmatt!          ▒░▒▓";system("color d7");Beep (932,300);Sleep(575/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t░▒▓▒        Schachmatt!          ░▒▓▒";
+    system("color ae");Beep (932,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (932,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▓▒░▒        Schachmatt!          ▓▒░▒";
+    system("color ae");Beep (932,100);Sleep(125/x);system("cls");cout<< "\n\n\n\n\n\n\n\n\n\n\t\t\t\t\t▒▓▒░        Schachmatt!          ▒▓▒░";system("color d7");Beep (1046,575);system("cls");
+    terminate();
+}
+
+/// selectPlayerFrom()
+/* This function uses the function "moveAround()" and it makes an analysis
+ * on what it gives back when the user select a square.
+ * It cheks if the selected square is empty or it has a player that dont correspond
+ * to the actual color that is playing.
+ *
+ * It only stops when the selected square contains a player that match the actual playing
+ * color, and then it writes the position of the selected player on the global variable
+ * "selX" and "selY"
+ */
+void selectPlayerFrom(){
+    string choosenPla;
+    bool legal=true;
+    do{
+        moveAround();
+        if(xyToPiece(xMove,yMove)[1] == ' '){
+            legal = false;
+            note = "Du bist kein Luftnomad!";
+        }
+        else if(xyToPiece(xMove,yMove)[0]!=player){  //"player" is just a character wit the letter
+            legal=false;                             //"w" or "s", so here we the color of the
+            note = "Du bist nicht dran!";            //selected player. (Im talking about "xyToPiece(xMove,yMove)[0]")
+        } else
+            legal = true;
+    }while(legal == false);
+    selX=xMove;
+    selY=yMove;
+}
+
+/// selectPlayerTo()
+/* This function does almost the same as the "selectPlayerFrom()" function, but now
+ * it sees if the selected player is an enemy or a empty square.
+ * If this is not the case, it will continue to read the keystrokes with "moveAround()"
+ *
+ * If the selected square is an enemy player or a empty square, it will move the selected
+ * player to the selected position
+ */
+void selectPlayerTo(){
+    int x=xMove, y=yMove;
+    string choosenPla;
+    bool legal;
+
+    do{
+        legal = true;
+        moveAround();
+        //  showMap(xMove,yMove);
+        choosenPla = xyToPiece(x,y);
+
+        if (selX == xMove && selY == yMove){ //If you select in "selectPlayerTo()" the same piece
+            selX = 0; selY = 0;              //that you selected in "selectPlayerFrom()", it
+            if (player=='w')                 //will "unselect" the player. Thats why we change
+                player = 's';                //"player" to the other color, so we have a second chance
+            else
+                player = 'w';
+            note = "Player unselected";
+        } else if (xyToPiece(xMove,yMove)[0] == player){
+            note = "Versuche nicht dein Team zu töten...";
+            legal = false;
+        } else if (xyToPiece(xMove,yMove)[1]=='K'){
+            schachMatt();
+        }
+    } while (legal==false);
+
+    //Dead Counter!
+    if(xyToPiece(xMove,yMove)[0] != ' '){
+        if (player == 'w')
+            dead[0][wDeads++]=xyToPiece(xMove,yMove);
+        else
+            dead[1][sDeads++]=xyToPiece(xMove,yMove);
+    }
+
+    //Reviver!!
+    //ALERTA! NO FUNCIONA!!________________________________________________
+    //_____________________________________________________________________
+    if (xyToPiece(xMove,yMove)[1] == 'B'&&((player=='w'&&yMove==1)||(player=='s'&&yMove==8))){
+        cout << "\nWho do you want to revive?";
+        string luckyPlayer;
+        bool legal = false;
+        do{
+            cin >> luckyPlayer;
+            if (player==luckyPlayer[0])
+                for (int i = 0; i < 16; ++i) {
+                    if(player=='w' && luckyPlayer == dead[0][i]){
+                        map[(xMove*9)-5][(yMove*3)+3]+map[(xMove*9)-4][(yMove*3)+3] == dead[0][i];
+                        legal = true;
+                        break;
+                    }
+                    if(player=='s' && luckyPlayer == dead[1][i]){
+                        map[(xMove*9)-5][(yMove*3)+3]+map[(xMove*9)-4][(yMove*3)+3] == dead[1][i];
+                        legal = true;
+                        break;
+                    }
+
+                }
+        }while(legal == false);
+    }
+
+
+    map [(x*9)-5][(y*3)+3] = " ";   //Deletes the the player on the previous position
+    map [(x*9)-4][(y*3)+3] = " ";
+    map [(xMove*9)-5][(yMove*3)+3] = choosenPla[0];  //Put the deleted player on the new position
+    map [(xMove*9)-4][(yMove*3)+3] = choosenPla[1];  //(Yes, the player actually dies... the "move sensation" its a lie, its just a delete and a remake the player in the selected square)
+}
+
+/// createMap()
+/* This function fills the map with the "Grid" and the players.
+ * It also set default values for some global variables, so... its perfect to use it
+ * as an "reset"!
+ */
+void createMap(){  //Create "game field"
+    int count = 8;
+    char count2 = 'a';
+    wDeads=0;sDeads=0;
+    selX = 0; selY = 0;
+    xMove=4; yMove=6;       //So the "green square" will be near to the white pieces at the start
+    player='w';
+    selX = 0; selY = 0;
+    //Create the map!
+
+    for (int i = 5; i <=9*8; i++){             //Shows the "abc" that appears on top
+        if (i % 9 != 0)                        //i beggins with 5, so at the start we will have only
+            map[i][3]=" ";                 //4 blank spaces, not 8.
+        else
+            map[i][3]=count2++;
+    }
+
+    for (int i = 5; i<29;i+=3){                //Shows the "123" that appears on one
+        map[74][i] = to_string(count);     //Side of the map
+        count--;
+    }
+
+
+    //Creates the "Grid"
+    for (int i = 4;i <29;i++){
+        for (int j = 0;j<73;j++){
+            if (j%9==0&&(i-4)%3==0){
+                map[j][i] = "╬";
+            } else if (j%9==0&&(i-4)%3!=0){
+                map[j][i] = "║";
+            } else if ((i-4)%3==0){
+                map[j][i] = "═";
+            } else
+                map[j][i] = " ";
+        }
+    }
+
+    //Figuren!
+    //string testMap[110j][32i];
+    count = 0;
+    string figuren ="TSLDKLST";
+    for (int i = 4; i < 28; i++){
+        for (int j = 0; j < 70; j++){
+            if (j%9==0){
+                if ((i == 6 || i == 27)){
+                    map[j+5][i]=figuren[count++]; //Hier kommt TSLDKLST
+                }
+
+                //Bauern
+                if ((i==9)||(i==24)){
+                    map[j+5][i]="B";
+                }
+
+                //Weiß oder Schwarz?
+                if (i==6||i==9)
+                    map[j+4][i]="s";
+                else if (i==27||i==24)
+                    map[j+4][i]="w";
+            }
+        }
+        count = 0;
+    }
+}
+
+/// main()
+/* main ist main, ta ta darara
+  * parapa pa pa main
+ */
+int main() {
+    system("@chcp 65001"); //Unicode!
+    createMap();
+    showMap(xMove,yMove); //Shows the map at start
+    do{
+        //Movements
+        bool legal = true;
+        do{
+            selectPlayerFrom();
+            string choosenPla = xyToPiece(xMove,yMove);
+            note = "\n The choosen Player is: " + choosenPla;
+        }while (legal == false);
+
+        selectPlayerTo();
+        selX=0;selY=0;      //reset values, so the blue square dissapears
+        showMap(xMove,yMove);
+
+        if(player == 'w')
+            player = 's';
+        else
+            player = 'w';
+
+
+        /// Dead counter is dead...
+        //        //-------------------------------------------------------------------------
+        //        //Some Other funktionalitäten
+
+        //        //Dead counter
+        //        if (testMap[nach][nach1] != "  ")
+        //            deads.push_back(testMap[nach][nach1]);
+
+        //        //Revive a Friend
+        //        if (((testMap[von][von1][1]=='B') &&  (deads.size()!=0)) && ((nach==0)||(nach==7))){      //Bugs: it doesnt recognize nach1==0 ...
+        //            cout << "Who you want to revive?";                     //Ein Bauer kann nach hintern gehen und es würde auch legal
+        //            string input;
+        //            cin >> input;
+        //            for (unsigned int i =0;i < deads.size(); i++){
+        //                if (input == deads[i]){
+        //                    testMap[von][von1] = deads[i];
+        //                    deads[i].erase();
+        //                }
+        //            }
+        //        }
+    }while(true);
+}
