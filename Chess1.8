@@ -17,6 +17,12 @@ static int generalColor=10, selectorColor=32;
 /* Bugs!:
  * I think the reviver still doesnt work properly... Im not sure :P
  *
+ * The color changer makes a mess... but it kinda works? i dont know
+ * if you have problems with it, you can use the "reset" option.
+ * Que esta yendo mal? Pues las matematicas, encontre que con numeros distintos
+ * cambian todos los colores! y cada multiplo de 16-1 cambia el fondo
+ * Lo quieres arreglar? Pues... Al final si, pero hoy ya no. Funciona de una
+ * manera interesante, asi que puedo dejarlo como un interesante bug.
  *
  * Notes!
  * Hey! tambien seria muy genial si hicieras una pantalla de inicio, no debe ser
@@ -30,47 +36,66 @@ static int generalColor=10, selectorColor=32;
  * bonito como un teclado en pantalla y solo aceptar nombres de 3 digitos. Proceso el cual se
  * puede pasar de alto, pero te dara algun nombre gracioso.
  *
- * Quiza que cada pieza tenga un color distinto? Puedes hacer eso?? NOPE, mejor no jueges
- * con esa parte del codigo -.-
- *
- * Un easter egg en la pantalla de inicio!!!! El codigo conami activaria una animacion!!!
- * Quiza tu animacion gato o algo asi... Implementado!! Muajajaja
- *
- * Pinchi codigo konami! A ver, estoy intentando guardar todo lo que el usuario tipea en
- * una variable, para luego compararla con el codigo konami, creo que la funcion "find"
- * es la culpable de mis desgracias, arreglala plis. Arreglado ;)
+ * Repara el cambio de colores...
 */
 
 
 void settings(){
+
     int in=0;
     int move=0;
-    string options[2] = {"Change the general colors","Change the selector colors"};
+    int change=0;
+
+    string options[5] = {"Change the general color (background)","Change the general color (text)","Change the selector colors(background)","Change the selector colors(text)","reset"};
 
     do{
         system("cls");
-        cout << in;
+        cout << change<<endl<<generalColor<<endl<<selectorColor<<endl;
+        cout<<"\n\n\t\t\t .d8888b.           888                        888\n\t\t\td88P  Y88b          888                        888\n\t\t\tY88b.               888                        888\n\t\t\t \"Y888b.    .d8888b 88888b.   8888b.   .d8888b 88888b.\n\t\t\t    \"Y88b. d88P\"    888 \"88b     \"88b d88P\"    888 \"88b\n\t\t\t      \"888 888      888  888 .d888888 888      888  888\n\t\t\tY88b  d88P Y88b.    888  888 888  888 Y88b.    888  888\n\t\t\t \"Y8888P\"   \"Y8888P 888  888 \"Y888888  \"Y8888P 888  888\n\n"<<endl;
         SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), generalColor);
-        for (unsigned int i = 0; i < 2; ++i) {
+        for (unsigned int i = 0; i < 5; ++i) {
             if(move == i){
                 SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), selectorColor);
-                cout << options[i]<<endl;
+                cout << "\t\t\t\t\t"<<options[i]<<endl;
                 SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), generalColor);
             } else
-                cout << options[i]<<endl;
+                cout << "\t\t\t\t\t"<< options[i]<<endl;
+            cout << endl;
         }
 
-
+        if(move==1){
+            generalColor+=change;
+            if(generalColor+1%16==0)
+                generalColor-=change;
+        }
+        if(move==0)
+            generalColor+=change+1*16;
+        if(move==3){
+            selectorColor+=change;
+            if(selectorColor+1%16==0)
+                selectorColor-=change;
+        }
+        if(move==2)
+            selectorColor+=change*15;
+        change=0;
         in = getch();
         if(in=='w' || in =='H'){
             move--;}
         if(in=='s' || in =='P'){
             move++;}
+        if(in=='a' || in =='K'){
+            change++;}
+        if(in=='d' || in =='M'){
+            change--;}
+        if(change>16)
+            change = 15;
         if(move < 0)
-            move = 2-1;
-        if(move > 2-1)
+            move = 5-1;
+        if(move > 5-1)
             move = 0;
     }while((in!=13));
+    if (move==4)//reset
+        generalColor=10; selectorColor=32;
 }
 
 void cat(){
